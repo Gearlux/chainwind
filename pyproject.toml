@@ -1,0 +1,78 @@
+[project]
+name = "chainwind"
+version = "0.1.0"
+description = "(logflow / confluid / liquifai) crypto-coin data viewer extending traidwind's viz layer."
+authors = [{name = "Taidal"}]
+license = {text = "MIT"}
+dependencies = [
+    "liquifai>=0.1.0",
+    "log-flow>=0.1.0",
+    "confluid>=0.1.0",
+    "numpy>=1.26",
+    "pandas>=2.0",
+    "requests>=2.31",
+]
+requires-python = ">=3.12"
+
+[project.optional-dependencies]
+dev = [
+    "black>=24.0.0,<25.0.0",
+    "isort>=5.13.0,<6.0.0",
+    "flake8>=6.0.0,<8.0.0",
+    "mypy>=1.0.0,<2.0.0",
+    "pytest>=7.0.0,<9.0.0",
+    "pytest-cov>=4.0.0,<7.0.0",
+]
+
+[project.scripts]
+chainwind = "chainwind.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["chainwind*"]
+
+[tool.setuptools.package-data]
+chainwind = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["chainwind"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.isort]
+profile = "black"
+line_length = 120
+
+[tool.black]
+line-length = 120
+
+[tool.flake8]
+max-line-length = 120
+extend-ignore = ["E203"]
+
+[tool.mypy]
+disable_error_code = ["import-untyped"]
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+show_error_codes = true
+strict_optional = true
+explicit_package_bases = true
+
+[[tool.mypy.overrides]]
+module = [
+    "liquifai.*",
+    "confluid.*",
+    "logflow.*",
+    "requests.*",
+]
+ignore_missing_imports = true
