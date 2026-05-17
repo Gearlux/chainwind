@@ -1,0 +1,50 @@
+# Download per-coin market-cap / price / volume history from CoinGecko's
+# free /coins/{id}/market_chart endpoint. Each coin is persisted as its own
+# Zarr group under $DATA_ROOT/traidwind/macro/coingecko/<coin_id>.zarr.
+#
+# This is the raw input for `compute_btc_dominance.yaml` (and similar
+# dominance computations). The default coin list is the top 20 by mcap as
+# of mid-2026 — sufficient to capture ~98% of total crypto mcap, which
+# makes BTC.D = btc_mcap / sum(top_20_mcaps) accurate within ~2% of the
+# true value reported by CoinGecko's paid /global/market_cap_chart.
+#
+# Authentication: optional. Without a key we hit the public Demo endpoint
+# (rate-limited; `days=max` is gated behind a Demo key as of 2025). With a
+# free Demo key set in COINGECKO_API_KEY, you can switch `days: max` for
+# full history. Register at https://www.coingecko.com/en/api/pricing.
+#
+# Run:
+#   marainer download chainwind/config/download_coingecko_market_cap.yaml
+
+processor:
+  !class:chainwind.download.DownloadCoinGeckoMarketCap
+  coin_ids:
+    - bitcoin
+    - ethereum
+    - tether
+    - usd-coin
+    - binancecoin
+    - ripple
+    - solana
+    - dogecoin
+    - cardano
+    - tron
+    - avalanche-2
+    - chainlink
+    - polkadot
+    - polygon-ecosystem-token   # POL (ex-MATIC); renamed Sept 2024
+    - shiba-inu
+    - litecoin
+    - bitcoin-cash
+    - uniswap
+    - dai
+    - leo-token
+  days: 365   # free public tier max; set to "max" if COINGECKO_API_KEY is configured
+  vs_currency: usd
+  out_root: ${DATA_ROOT}/traidwind/macro
+  skip_if_fresh: true
+  freshness_tolerance_hours: 24
+  # CoinGecko anonymous tier is throttled to ~5-15 calls/min. 12s pacing
+  # stays under the strict end. With COINGECKO_API_KEY set, this auto-
+  # zeroes (Demo key gets 30+/min).
+  rate_limit_seconds: 12

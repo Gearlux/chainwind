@@ -1,0 +1,19 @@
+# Download the daily total USD-pegged stablecoin circulating supply from
+# DeFiLlama's free /stablecoincharts/all endpoint. Stored at
+# $DATA_ROOT/traidwind/macro/defillama/stablecoins_total.zarr.
+#
+# This is the raw input for the Stablecoin Supply Ratio (SSR):
+#   SSR = BTC market cap / total stablecoin supply
+# (per Gemini's checklist 2.3 — "dry powder" indicator).
+#
+# No authentication required. DeFiLlama's stablecoins API is public.
+# Data goes back to ~Nov 2017 (~8.5 years).
+#
+# Run:
+#   marainer download chainwind/config/download_defillama_stablecoins.yaml
+
+processor:
+  !class:chainwind.download.DownloadDeFiLlamaStablecoins
+  out_root: ${DATA_ROOT}/traidwind/macro
+  skip_if_fresh: true
+  freshness_tolerance_hours: 24

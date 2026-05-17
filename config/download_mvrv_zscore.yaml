@@ -1,0 +1,22 @@
+# Download the daily Bitcoin MVRV Z-Score history from bitcoin-data.com.
+# Stored at $DATA_ROOT/traidwind/macro/mvrv_zscore.zarr (single 2-D (N, 1)
+# data array of [mvrv_zscore]).
+#
+# Per Gemini's checklist 4.1: MVRV Z-Score is THE canonical Bitcoin cycle-
+# overheating indicator. Long-term holders bias their accumulation/
+# distribution around these thresholds:
+#   * MVRV-Z > 6   → cycle top likely (start selling)
+#   * MVRV-Z < 0   → long-term accumulation zone (start buying)
+#   * 0 < Z < 2    → neutral / mid-cycle
+#
+# No authentication required. Free tier returns ~4 years of daily data
+# (2022 onwards). Source: https://bitcoin-data.com/api/v1/mvrv-zscore.
+#
+# Run:
+#   marainer download chainwind/config/download_mvrv_zscore.yaml
+
+processor:
+  !class:chainwind.download.DownloadMVRVZScore
+  out_root: ${DATA_ROOT}/traidwind/macro
+  skip_if_fresh: true
+  freshness_tolerance_hours: 24

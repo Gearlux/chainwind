@@ -44,7 +44,11 @@ pipeline {
                 // (Gearlux distribution names are intentionally unpublished on PyPI).
                 sh "${VENV_BIN}/uv pip install --no-deps -e ${env.WORKSPACE_ROOT}/logflow"
                 sh "${VENV_BIN}/uv pip install --no-deps -e ${env.WORKSPACE_ROOT}/confluid"
+                sh "${VENV_BIN}/uv pip install --no-deps -e ${env.WORKSPACE_ROOT}/dataflux"
                 sh "${VENV_BIN}/uv pip install --no-deps -e ${env.WORKSPACE_ROOT}/liquifai"
+                sh "${VENV_BIN}/uv pip install --no-deps -e ${env.WORKSPACE_ROOT}/torpaido"
+                sh "${VENV_BIN}/uv pip install --no-deps -e ${env.WORKSPACE_ROOT}/marainer"
+                sh "${VENV_BIN}/uv pip install --no-deps -e ${env.WORKSPACE_ROOT}/traidwind"
                 sh "${VENV_BIN}/uv pip install -e .[dev]"
                 // Notebook-only extras (matplotlib, jupyter kernels, etc.) live
                 // in the optional `[notebook]` extra when the project ships

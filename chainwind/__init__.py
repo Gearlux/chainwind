@@ -9,16 +9,28 @@ Extends :mod:`traidwind`'s market-agnostic visualization layer with:
 - a React UI with a per-coin tab (OHLCV + indicators + overlays + freshness widget + backtest panel)
   and a portfolio-tab scaffold.
 
-This v0.1.0 release ships only the project scaffolding; downloaders, server routes, and UI follow.
+The freshness reporter, FastAPI extension, and React UI follow in subsequent commits.
 """
 
 __version__ = "0.1.0"
 
 from chainwind.coins import BUILTIN_COINS, CoinSpec, get_coin, list_coins
+from chainwind.download import (
+    DownloadCoinGeckoMarketCap,
+    DownloadDeFiLlamaStablecoins,
+    DownloadFarsideETFFlows,
+    DownloadFearGreed,
+    DownloadMVRVZScore,
+)
 
 __all__ = [
     "CoinSpec",
     "BUILTIN_COINS",
     "get_coin",
     "list_coins",
+    "DownloadCoinGeckoMarketCap",
+    "DownloadDeFiLlamaStablecoins",
+    "DownloadFarsideETFFlows",
+    "DownloadFearGreed",
+    "DownloadMVRVZScore",
 ]

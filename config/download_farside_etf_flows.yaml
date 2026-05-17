@@ -1,0 +1,23 @@
+# Download US spot Bitcoin ETF daily flow history from Farside Investors.
+# Stored at $DATA_ROOT/traidwind/macro/farside/bitcoin_etf_flows.zarr —
+# one column per ETF ticker (IBIT/FBTC/BITB/ARKB/BTCO/EZBC/BRRR/HODL/BTCW/
+# MSBT/GBTC/BTC) plus Total. Values are $M flows; negative = redemptions.
+#
+# Data starts 2024-01-11 (the day US spot BTC ETFs launched). Updated daily.
+#
+# No authentication required. Farside requires a real-browser User-Agent
+# (their Cloudflare check blocks default curl/python UAs); the class
+# already sets one.
+#
+# Per Gemini's checklist 3.2: 30-day MA of net inflows is the "institutional
+# demand momentum" signal. Sustained positive flows correlate with BTC
+# price strength.
+#
+# Run:
+#   marainer download chainwind/config/download_farside_etf_flows.yaml
+
+processor:
+  !class:chainwind.download.DownloadFarsideETFFlows
+  out_root: ${DATA_ROOT}/traidwind/macro
+  skip_if_fresh: true
+  freshness_tolerance_hours: 24

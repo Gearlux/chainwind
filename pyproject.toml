@@ -8,9 +8,11 @@ dependencies = [
     "liquifai>=0.1.0",
     "log-flow>=0.1.0",
     "confluid>=0.1.0",
+    "traidwind>=0.2.0",
     "numpy>=1.26",
     "pandas>=2.0",
     "requests>=2.31",
+    "zarr>=3.0.0",
 ]
 requires-python = ">=3.12"
 
@@ -22,6 +24,7 @@ dev = [
     "mypy>=1.0.0,<2.0.0",
     "pytest>=7.0.0,<9.0.0",
     "pytest-cov>=4.0.0,<7.0.0",
+    "requests-mock>=1.11",
 ]
 
 [project.scripts]
@@ -74,5 +77,7 @@ module = [
     "confluid.*",
     "logflow.*",
     "requests.*",
+    "traidwind.*",
+    "zarr.*",
 ]
 ignore_missing_imports = true

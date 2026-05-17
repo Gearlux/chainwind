@@ -1,0 +1,18 @@
+# Download the alternative.me Crypto Fear & Greed Index daily history.
+# Stored as $DATA_ROOT/traidwind/macro/fear_greed.zarr (single 2-D (N, 1)
+# data array of [value] rows, where value is 0-100; 0=Extreme Fear,
+# 100=Extreme Greed).
+#
+# No authentication required — alternative.me's /fng/ endpoint is public.
+# Data goes back to 2018 when alternative.me started tracking. Use
+# lookback_days=0 (default) to fetch the full history.
+#
+# Run:
+#   marainer download chainwind/config/download_fear_greed.yaml
+
+processor:
+  !class:chainwind.download.DownloadFearGreed
+  out_root: ${DATA_ROOT}/traidwind/macro
+  lookback_days: 0   # 0 = all available history
+  skip_if_fresh: true
+  freshness_tolerance_hours: 24
