@@ -16,9 +16,6 @@ from chainwind.coins import list_coins
 
 logger = get_logger(__name__)
 
-if "." not in sys.path:
-    sys.path.insert(0, ".")
-
 app = LiquifyApp(name="chainwind", description="crypto-coin data viewer.")
 
 
