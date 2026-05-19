@@ -7,8 +7,6 @@ NOTE: do not add ``from __future__ import annotations`` here — liquifai's DI i
 class objects from parameter annotations and PEP 563 string annotations break that lookup.
 """
 
-import sys
-
 from liquifai import LiquifyApp
 from logflow import get_logger
 
