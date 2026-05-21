@@ -3,11 +3,10 @@
 from pathlib import Path
 from typing import Union
 
+import confluid
 import numpy as np
 import pandas as pd
 import zarr
-
-import confluid
 from logflow import get_logger
 from traidwind.paths import _expand, _zarr_is_fresh
 
@@ -138,11 +137,7 @@ class DownloadFarsideETFFlows:
         # Step 5 — parse Date. Farside format: "11 Jan 2024".
         df["date"] = pd.to_datetime(df[date_col], format="%d %b %Y", utc=True)
         df["timestamp_ms"] = (df["date"].astype("int64") // 10**6).astype("int64")
-        df = (
-            df.drop(columns=[date_col])
-            .sort_values("timestamp_ms")
-            .reset_index(drop=True)
-        )
+        df = df.drop(columns=[date_col]).sort_values("timestamp_ms").reset_index(drop=True)
         return df
 
     def _write_zarr(self, zpath: Path, df: pd.DataFrame) -> None:

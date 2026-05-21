@@ -43,15 +43,11 @@ def test_coin_spec_defaults() -> None:
 
 def test_coin_spec_is_frozen() -> None:
     btc = get_coin("BTC")
-    with pytest.raises(
-        Exception
-    ):  # dataclass(frozen=True) → FrozenInstanceError (Exception subclass)
+    with pytest.raises(Exception):  # dataclass(frozen=True) → FrozenInstanceError (Exception subclass)
         btc.symbol = "ETH"  # type: ignore[misc]
 
 
 def test_coin_spec_construction() -> None:
-    spec = CoinSpec(
-        symbol="ADA", name="Cardano", coingecko_id="cardano", default_pair="ADA/USDT"
-    )
+    spec = CoinSpec(symbol="ADA", name="Cardano", coingecko_id="cardano", default_pair="ADA/USDT")
     assert spec.default_exchange == "binance"
     assert spec.default_market_type == "spot"

@@ -39,9 +39,7 @@ class TestDownloadMVRVZScore:
         assert grp.attrs["source"] == "bitcoin-data.com.api.v1.mvrv-zscore"
         assert list(cast(Any, grp["data"])[:, 0]) == [0.5, 0.7, 0.9]
 
-    def test_empty_response_logs_warning(
-        self, tmp_path: Path, requests_mock: Any, loguru_capture: List[str]
-    ) -> None:
+    def test_empty_response_logs_warning(self, tmp_path: Path, requests_mock: Any, loguru_capture: List[str]) -> None:
         requests_mock.get(self.URL, json=[])
         d = DownloadMVRVZScore(out_root=tmp_path, skip_if_fresh=False)
         d.run()
@@ -51,9 +49,7 @@ class TestDownloadMVRVZScore:
     def test_skip_if_fresh(self, tmp_path: Path, requests_mock: Any) -> None:
         zpath = tmp_path / "mvrv_zscore.zarr"
         zpath.parent.mkdir(parents=True, exist_ok=True)
-        ts = np.array(
-            [int(datetime.now(timezone.utc).timestamp() * 1000)], dtype=np.int64
-        )
+        ts = np.array([int(datetime.now(timezone.utc).timestamp() * 1000)], dtype=np.int64)
         vals = np.array([[1.0]], dtype=np.float64)
         grp = zarr.open_group(str(zpath), mode="w")
         grp.create_dataset("data", data=vals, shape=vals.shape, dtype="float64")
@@ -62,9 +58,7 @@ class TestDownloadMVRVZScore:
 
         # Would fail if called.
         requests_mock.get(self.URL, status_code=500)
-        d = DownloadMVRVZScore(
-            out_root=tmp_path, skip_if_fresh=True, freshness_tolerance_hours=48
-        )
+        d = DownloadMVRVZScore(out_root=tmp_path, skip_if_fresh=True, freshness_tolerance_hours=48)
         d.run()
         assert requests_mock.call_count == 0
 

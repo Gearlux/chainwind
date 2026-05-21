@@ -3,11 +3,10 @@
 from pathlib import Path
 from typing import Union
 
+import confluid
 import numpy as np
 import pandas as pd
 import zarr
-
-import confluid
 from logflow import get_logger
 from traidwind.paths import _expand, _zarr_is_fresh
 
@@ -89,11 +88,7 @@ class DownloadDeFiLlamaStablecoins:
             return
         rows.sort(key=lambda r: r[0])
         df = pd.DataFrame(rows, columns=["timestamp_ms", "circulating_usd"])
-        df = (
-            df.drop_duplicates(subset="timestamp_ms")
-            .sort_values("timestamp_ms")
-            .reset_index(drop=True)
-        )
+        df = df.drop_duplicates(subset="timestamp_ms").sort_values("timestamp_ms").reset_index(drop=True)
         df["date"] = pd.to_datetime(df["timestamp_ms"], unit="ms", utc=True)
         self._write_zarr(zpath, df)
         logger.info(f"[wrote] {len(df)} stablecoin daily records -> {zpath}")

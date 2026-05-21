@@ -35,9 +35,7 @@ class TestDownloadCoinGeckoMarketCap:
         ]
         requests_mock.get(self.FREE_URL, json=self._payload(rows))
 
-        d = DownloadCoinGeckoMarketCap(
-            coin_ids=["bitcoin"], out_root=tmp_path, days=30, skip_if_fresh=False
-        )
+        d = DownloadCoinGeckoMarketCap(coin_ids=["bitcoin"], out_root=tmp_path, days=30, skip_if_fresh=False)
         d.run()
 
         zpath = tmp_path / "coingecko" / "bitcoin.zarr"
@@ -58,9 +56,7 @@ class TestDownloadCoinGeckoMarketCap:
     ) -> None:
         monkeypatch.delenv("COINGECKO_API_KEY", raising=False)
         requests_mock.get(self.FREE_URL, json=self._payload([(1, 100.0, 1.0, 10.0)]))
-        d = DownloadCoinGeckoMarketCap(
-            coin_ids=["bitcoin"], out_root=tmp_path, skip_if_fresh=False
-        )
+        d = DownloadCoinGeckoMarketCap(coin_ids=["bitcoin"], out_root=tmp_path, skip_if_fresh=False)
         d.run()
         assert requests_mock.call_count == 1
         assert "x-cg-demo-api-key" not in requests_mock.last_request.headers
@@ -70,14 +66,9 @@ class TestDownloadCoinGeckoMarketCap:
     ) -> None:
         monkeypatch.setenv("COINGECKO_API_KEY", "demo-key-xyz")
         requests_mock.get(self.PRO_URL, json=self._payload([(1, 100.0, 1.0, 10.0)]))
-        d = DownloadCoinGeckoMarketCap(
-            coin_ids=["bitcoin"], out_root=tmp_path, skip_if_fresh=False
-        )
+        d = DownloadCoinGeckoMarketCap(coin_ids=["bitcoin"], out_root=tmp_path, skip_if_fresh=False)
         d.run()
-        assert (
-            requests_mock.last_request.headers.get("x-cg-demo-api-key")
-            == "demo-key-xyz"
-        )
+        assert requests_mock.last_request.headers.get("x-cg-demo-api-key") == "demo-key-xyz"
 
     def test_empty_response_logs_warning(
         self,
@@ -87,12 +78,8 @@ class TestDownloadCoinGeckoMarketCap:
         loguru_capture: List[str],
     ) -> None:
         monkeypatch.delenv("COINGECKO_API_KEY", raising=False)
-        requests_mock.get(
-            self.FREE_URL, json={"prices": [], "market_caps": [], "total_volumes": []}
-        )
-        d = DownloadCoinGeckoMarketCap(
-            coin_ids=["bitcoin"], out_root=tmp_path, skip_if_fresh=False
-        )
+        requests_mock.get(self.FREE_URL, json={"prices": [], "market_caps": [], "total_volumes": []})
+        d = DownloadCoinGeckoMarketCap(coin_ids=["bitcoin"], out_root=tmp_path, skip_if_fresh=False)
         d.run()
         assert not (tmp_path / "coingecko" / "bitcoin.zarr").exists()
         assert any("[empty]" in m and "bitcoin" in m for m in loguru_capture)
@@ -142,9 +129,7 @@ class TestDownloadCoinGeckoMarketCap:
         # 1 initial + 2 retries.
         assert requests_mock.call_count == 3
 
-    def test_days_param_forwarded(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, requests_mock: Any
-    ) -> None:
+    def test_days_param_forwarded(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, requests_mock: Any) -> None:
         monkeypatch.delenv("COINGECKO_API_KEY", raising=False)
         requests_mock.get(self.FREE_URL, json=self._payload([(1, 1.0, 1.0, 1.0)]))
         d = DownloadCoinGeckoMarketCap(
@@ -158,12 +143,8 @@ class TestDownloadCoinGeckoMarketCap:
         assert requests_mock.last_request.qs.get("days") == ["90"]
         assert requests_mock.last_request.qs.get("vs_currency") == ["eur"]
 
-    def test_expandvars_resolves_data_root(
-        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-    ) -> None:
+    def test_expandvars_resolves_data_root(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         monkeypatch.setenv("DATA_ROOT", str(tmp_path))
         monkeypatch.delenv("COINGECKO_API_KEY", raising=False)
-        d = DownloadCoinGeckoMarketCap(
-            coin_ids=["bitcoin"], out_root="${DATA_ROOT}/traidwind/macro"
-        )
+        d = DownloadCoinGeckoMarketCap(coin_ids=["bitcoin"], out_root="${DATA_ROOT}/traidwind/macro")
         assert d.out_root == tmp_path / "traidwind" / "macro"

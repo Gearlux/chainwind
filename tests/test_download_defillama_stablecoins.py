@@ -44,9 +44,7 @@ class TestDownloadDeFiLlamaStablecoins:
         assert grp.attrs["source"] == "defillama.stablecoincharts.all"
         assert list(cast(Any, grp["data"])[:, 0]) == [1.0e11, 1.05e11, 1.10e11]
 
-    def test_rows_without_peggedusd_are_skipped(
-        self, tmp_path: Path, requests_mock: Any
-    ) -> None:
+    def test_rows_without_peggedusd_are_skipped(self, tmp_path: Path, requests_mock: Any) -> None:
         """Some rows in DeFiLlama's history lack a peggedUSD entry (very
         early days before USD-pegged stablecoins existed). Drop them
         rather than coercing to NaN/0."""
@@ -57,15 +55,11 @@ class TestDownloadDeFiLlamaStablecoins:
         requests_mock.get(self.URL, json=rows)
         d = DownloadDeFiLlamaStablecoins(out_root=tmp_path, skip_if_fresh=False)
         d.run()
-        grp = zarr.open_group(
-            str(tmp_path / "defillama" / "stablecoins_total.zarr"), mode="r"
-        )
+        grp = zarr.open_group(str(tmp_path / "defillama" / "stablecoins_total.zarr"), mode="r")
         assert cast(Any, grp["data"]).shape == (1, 1)
         assert list(cast(Any, grp["data"])[:, 0]) == [100.0]
 
-    def test_empty_response_logs_warning(
-        self, tmp_path: Path, requests_mock: Any, loguru_capture: List[str]
-    ) -> None:
+    def test_empty_response_logs_warning(self, tmp_path: Path, requests_mock: Any, loguru_capture: List[str]) -> None:
         requests_mock.get(self.URL, json=[])
         d = DownloadDeFiLlamaStablecoins(out_root=tmp_path, skip_if_fresh=False)
         d.run()
@@ -75,9 +69,7 @@ class TestDownloadDeFiLlamaStablecoins:
     def test_skip_if_fresh(self, tmp_path: Path, requests_mock: Any) -> None:
         zpath = tmp_path / "defillama" / "stablecoins_total.zarr"
         zpath.parent.mkdir(parents=True, exist_ok=True)
-        ts = np.array(
-            [int(datetime.now(timezone.utc).timestamp() * 1000)], dtype=np.int64
-        )
+        ts = np.array([int(datetime.now(timezone.utc).timestamp() * 1000)], dtype=np.int64)
         vals = np.array([[100.0]], dtype=np.float64)
         grp = zarr.open_group(str(zpath), mode="w")
         grp.create_dataset("data", data=vals, shape=vals.shape, dtype="float64")
@@ -87,9 +79,7 @@ class TestDownloadDeFiLlamaStablecoins:
         # Would fail if called.
         requests_mock.get(self.URL, status_code=500)
 
-        d = DownloadDeFiLlamaStablecoins(
-            out_root=tmp_path, skip_if_fresh=True, freshness_tolerance_hours=48
-        )
+        d = DownloadDeFiLlamaStablecoins(out_root=tmp_path, skip_if_fresh=True, freshness_tolerance_hours=48)
         d.run()
         assert requests_mock.call_count == 0
 

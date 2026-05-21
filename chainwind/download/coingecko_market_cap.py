@@ -5,11 +5,10 @@ import time
 from pathlib import Path
 from typing import Any, List, Optional, Union
 
+import confluid
 import numpy as np
 import pandas as pd
 import zarr
-
-import confluid
 from logflow import get_logger
 from traidwind.paths import _expand, _zarr_is_fresh
 
@@ -120,9 +119,7 @@ class DownloadCoinGeckoMarketCap:
             if attempt == self.max_retries_on_429:
                 break  # let raise_for_status below surface the final 429
             wait_s = int(resp.headers.get("Retry-After", "60"))
-            logger.warning(
-                f"[429] {coin_id} rate-limited; waiting {wait_s}s (attempt {attempt + 1})"
-            )
+            logger.warning(f"[429] {coin_id} rate-limited; waiting {wait_s}s (attempt {attempt + 1})")
             time.sleep(wait_s)
         assert resp is not None  # loop body always executes ≥ once
         resp.raise_for_status()
@@ -131,9 +128,7 @@ class DownloadCoinGeckoMarketCap:
         prices = payload.get("prices", [])
         volumes = payload.get("total_volumes", [])
         if not mcaps:
-            logger.warning(
-                f"[empty] {coin_id} - CoinGecko returned no market-cap history"
-            )
+            logger.warning(f"[empty] {coin_id} - CoinGecko returned no market-cap history")
             return
         # Each list is [[ts_ms, value], ...]. Join on timestamp; CG aligns
         # them so the lists are the same length, but guard anyway.
@@ -147,14 +142,8 @@ class DownloadCoinGeckoMarketCap:
             ]
             for i in range(n)
         ]
-        df = pd.DataFrame(
-            rows, columns=["timestamp_ms", "market_cap", "price", "total_volume"]
-        )
-        df = (
-            df.drop_duplicates(subset="timestamp_ms")
-            .sort_values("timestamp_ms")
-            .reset_index(drop=True)
-        )
+        df = pd.DataFrame(rows, columns=["timestamp_ms", "market_cap", "price", "total_volume"])
+        df = df.drop_duplicates(subset="timestamp_ms").sort_values("timestamp_ms").reset_index(drop=True)
         df["date"] = pd.to_datetime(df["timestamp_ms"], unit="ms", utc=True)
         self._write_zarr(zpath, df, coin_id)
         logger.info(f"[wrote] {len(df)} {coin_id} mcap/price/volume rows -> {zpath}")

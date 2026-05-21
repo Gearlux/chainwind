@@ -7,9 +7,10 @@ NOTE: do not add ``from __future__ import annotations`` here — liquifai's DI i
 class objects from parameter annotations and PEP 563 string annotations break that lookup.
 """
 
-from chainwind.coins import list_coins
 from liquifai import LiquifyApp
 from logflow import get_logger
+
+from chainwind.coins import list_coins
 
 logger = get_logger(__name__)
 
@@ -24,9 +25,7 @@ def list_coins_cmd() -> None:
     print(f"{'symbol'.ljust(width)}  name           default_pair       coingecko_id")
     print(f"{'-' * width}  -------------  -----------------  -------------")
     for coin in coins:
-        print(
-            f"{coin.symbol.ljust(width)}  {coin.name:<13}  {coin.default_pair:<17}  {coin.coingecko_id}"
-        )
+        print(f"{coin.symbol.ljust(width)}  {coin.name:<13}  {coin.default_pair:<17}  {coin.coingecko_id}")
     print()
     print(f"{len(coins)} coin(s) registered.")
 
