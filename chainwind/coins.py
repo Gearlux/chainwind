@@ -25,9 +25,15 @@ class CoinSpec:
 
 
 BUILTIN_COINS: tuple[CoinSpec, ...] = (
-    CoinSpec(symbol="BTC", name="Bitcoin", coingecko_id="bitcoin", default_pair="BTC/USDT"),
-    CoinSpec(symbol="ETH", name="Ethereum", coingecko_id="ethereum", default_pair="ETH/USDT"),
-    CoinSpec(symbol="SOL", name="Solana", coingecko_id="solana", default_pair="SOL/USDT"),
+    CoinSpec(
+        symbol="BTC", name="Bitcoin", coingecko_id="bitcoin", default_pair="BTC/USDT"
+    ),
+    CoinSpec(
+        symbol="ETH", name="Ethereum", coingecko_id="ethereum", default_pair="ETH/USDT"
+    ),
+    CoinSpec(
+        symbol="SOL", name="Solana", coingecko_id="solana", default_pair="SOL/USDT"
+    ),
 )
 
 
@@ -42,4 +48,6 @@ def get_coin(symbol: str) -> CoinSpec:
     for coin in BUILTIN_COINS:
         if coin.symbol == target:
             return coin
-    raise KeyError(f"Unknown coin symbol {symbol!r}. Known: {[c.symbol for c in BUILTIN_COINS]}")
+    raise KeyError(
+        f"Unknown coin symbol {symbol!r}. Known: {[c.symbol for c in BUILTIN_COINS]}"
+    )

@@ -3,10 +3,11 @@
 from pathlib import Path
 from typing import Union
 
-import confluid
 import numpy as np
 import pandas as pd
 import zarr
+
+import confluid
 from logflow import get_logger
 from traidwind.paths import _expand, _zarr_is_fresh
 
@@ -51,7 +52,9 @@ class DownloadFearGreed:
         freshness_tolerance_hours: int = 24,
     ) -> None:
         if lookback_days < 0:
-            raise ValueError(f"lookback_days must be >= 0 (0 means all history), got {lookback_days}")
+            raise ValueError(
+                f"lookback_days must be >= 0 (0 means all history), got {lookback_days}"
+            )
         self.out_root = _expand(out_root)
         self.lookback_days = lookback_days
         self.skip_if_fresh = skip_if_fresh
@@ -65,7 +68,9 @@ class DownloadFearGreed:
             logger.info(f"[skip] fear_greed - zarr already fresh at {zpath}")
             return
         zpath.parent.mkdir(parents=True, exist_ok=True)
-        resp = requests.get(_ALTERNATIVE_ME_FNG_URL, params={"limit": self.lookback_days}, timeout=30)
+        resp = requests.get(
+            _ALTERNATIVE_ME_FNG_URL, params={"limit": self.lookback_days}, timeout=30
+        )
         resp.raise_for_status()
         payload = resp.json()
         records = payload.get("data", [])
