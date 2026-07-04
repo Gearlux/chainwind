@@ -10,6 +10,7 @@ data array plus a parallel ``timestamps_ms`` array.
 """
 
 from chainwind.download.coingecko_market_cap import DownloadCoinGeckoMarketCap
+from chainwind.download.coinmetrics_mvrv import DownloadCoinMetricsMVRV
 from chainwind.download.defillama_stablecoins import DownloadDeFiLlamaStablecoins
 from chainwind.download.farside_etf_flows import DownloadFarsideETFFlows
 from chainwind.download.fear_greed import DownloadFearGreed
@@ -17,6 +18,7 @@ from chainwind.download.mvrv_z_score import DownloadMVRVZScore
 
 __all__ = [
     "DownloadCoinGeckoMarketCap",
+    "DownloadCoinMetricsMVRV",
     "DownloadDeFiLlamaStablecoins",
     "DownloadFarsideETFFlows",
     "DownloadFearGreed",

@@ -1,0 +1,32 @@
+# Download the daily MVRV ratio + derived MVRV Z-Score for one asset from the
+# CoinMetrics Community API (FREE, no API key). Stored at
+# $DATA_ROOT/traidwind/macro/coinmetrics/<asset>_mvrv.zarr (2-D (N, 2) data
+# array of [mvrv, mvrv_zscore]).
+#
+# Why this exists alongside download_mvrv_zscore.yaml: bitcoin-data.com is
+# Bitcoin-ONLY. CoinMetrics' community network data publishes the MVRV ratio
+# (CapMVRVCur) + market cap (CapMrktCurUSD) for ~150 assets — BTC, ETH, ADA,
+# ... — so this is the multi-asset path. The Z-Score is derived locally:
+#     realized_cap = market_cap / mvrv_ratio
+#     z            = (market_cap - realized_cap) / stdev(market_cap, all-time)
+#
+# CAVEAT — cross-provider scale: the realized-cap methodology and stdev window
+# differ from bitcoin-data.com, so the Z-Score's ABSOLUTE scale is provider-
+# specific. Interpret it on its own historical range; do NOT reuse the BTC
+# cycle-band thresholds (>6 top, <0 accumulation) 1:1.
+#
+# NOT covered: Solana (no free realized-cap source for the account-based chain)
+# — requesting `asset: SOL` logs an [unsupported] warning and writes nothing.
+#
+# No authentication required. Source:
+#   https://community-api.coinmetrics.io/v4/timeseries/asset-metrics
+#
+# Run (change `asset` to BTC / ETH / ADA / ...):
+#   marainer download chainwind/config/download_coinmetrics_mvrv.yaml
+
+processor:
+  !class:chainwind.download.DownloadCoinMetricsMVRV
+  asset: ETH
+  out_root: ${DATA_ROOT}/traidwind/macro
+  skip_if_fresh: true
+  freshness_tolerance_hours: 24
