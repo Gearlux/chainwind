@@ -6,7 +6,7 @@ authors = [{name = "Taidal"}]
 license = {text = "MIT"}
 dependencies = [
     "liquifai>=0.1.0",
-    "log-flow>=0.1.0",
+    "logflow-ml>=0.2.0",
     "confluid>=0.1.0",
     "traidwind>=0.2.0",
     "numpy>=1.26",
