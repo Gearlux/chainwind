@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import Any, List, Optional, Sequence, cast
 
 import zarr
-from logflow import get_logger
+from loggair import get_logger
 from traidwind.paths import _expand
 
 from chainwind.trackers import TrackerCategory, TrackerSpec

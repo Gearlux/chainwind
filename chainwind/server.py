@@ -20,7 +20,7 @@ import webbrowser
 from pathlib import Path
 from typing import Any, Optional
 
-from logflow import get_logger
+from loggair import get_logger
 
 from chainwind.series import read_primary_series, read_series, tracker_freshness, zones_payload
 from chainwind.trackers import catalog, get_catalog_tracker, is_updatable, list_trackers

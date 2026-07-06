@@ -9,7 +9,7 @@ import confluid
 import numpy as np
 import pandas as pd
 import zarr
-from logflow import get_logger
+from loggair import get_logger
 from traidwind.paths import _expand, _zarr_is_fresh
 
 logger = get_logger(__name__)

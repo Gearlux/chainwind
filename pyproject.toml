@@ -1,12 +1,12 @@
 [project]
 name = "chainwind"
 version = "0.1.0"
-description = "(logflow / confluid / liquifai) crypto-coin data viewer extending traidwind's viz layer."
+description = "(loggair / confluid / liquifai) crypto-coin data viewer extending traidwind's viz layer."
 authors = [{name = "Taidal"}]
 license = {text = "MIT"}
 dependencies = [
     "liquifai>=0.1.0",
-    "logflow-ml>=0.2.0",
+    "loggair>=0.1.0",
     "confluid>=0.1.0",
     "traidwind>=0.2.0",
     "numpy>=1.26",
@@ -84,7 +84,7 @@ explicit_package_bases = true
 module = [
     "liquifai.*",
     "confluid.*",
-    "logflow.*",
+    "loggair.*",
     "requests.*",
     "traidwind.*",
     "zarr.*",

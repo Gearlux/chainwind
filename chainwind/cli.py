@@ -14,7 +14,7 @@ class objects from parameter annotations and PEP 563 string annotations break th
 """
 
 from liquifai import LiquifyApp
-from logflow import get_logger
+from loggair import get_logger
 
 from chainwind.coins import list_coins
 from chainwind.series import tracker_freshness

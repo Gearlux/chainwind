@@ -16,7 +16,7 @@ not fork).
 
 from typing import Any, Dict, List
 
-from logflow import get_logger
+from loggair import get_logger
 
 from chainwind.series import tracker_freshness
 from chainwind.trackers import TrackerSpec, get_catalog_tracker, is_updatable, list_trackers

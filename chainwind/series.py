@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional, cast
 
 import numpy as np
 import zarr
-from logflow import get_logger
+from loggair import get_logger
 from traidwind.paths import _expand, _zarr_is_fresh
 
 from chainwind.trackers import TrackerSpec
