@@ -45,3 +45,4 @@ test-report.xml
 chainwind/frontend/node_modules/
 chainwind/frontend/.vite/
 # NB: chainwind/frontend/dist/ is COMMITTED so `chainwind serve` works without npm.
+/pyrightconfig.json
