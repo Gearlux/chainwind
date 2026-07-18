@@ -35,7 +35,7 @@ pipeline {
                 // (Gearlux distribution names are intentionally unpublished on PyPI).
                 sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/loggair.git@main"
                 sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/confluid.git@main"
-                sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/data-flux.git@main"
+                sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/sampleflux.git@main"
                 sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/liquifai.git@main"
                 sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/torpaido.git@main"
                 sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/marainer.git@main"

@@ -44,7 +44,7 @@ pipeline {
                 // (Gearlux distribution names are intentionally unpublished on PyPI).
                 sh "${VENV_BIN}/uv pip install --no-deps -e ${env.WORKSPACE_ROOT}/loggair"
                 sh "${VENV_BIN}/uv pip install --no-deps -e ${env.WORKSPACE_ROOT}/confluid"
-                sh "${VENV_BIN}/uv pip install --no-deps -e ${env.WORKSPACE_ROOT}/dataflux"
+                sh "${VENV_BIN}/uv pip install --no-deps -e ${env.WORKSPACE_ROOT}/sampleflux"
                 sh "${VENV_BIN}/uv pip install --no-deps -e ${env.WORKSPACE_ROOT}/liquifai"
                 sh "${VENV_BIN}/uv pip install --no-deps -e ${env.WORKSPACE_ROOT}/torpaido"
                 sh "${VENV_BIN}/uv pip install --no-deps -e ${env.WORKSPACE_ROOT}/marainer"
