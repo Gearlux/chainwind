@@ -10,9 +10,9 @@
 # Data goes back to ~Nov 2017 (~8.5 years).
 #
 # Run:
-#   marainer download chainwind/config/download_defillama_stablecoins.yaml
+#   sampleflux run chainwind/config/download_defillama_stablecoins.yaml
 
-processor:
+runnable:
   !class:chainwind.download.DownloadDeFiLlamaStablecoins
   out_root: ${DATA_ROOT}/traidwind/macro
   skip_if_fresh: true

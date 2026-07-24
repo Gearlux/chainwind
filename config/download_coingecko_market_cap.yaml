@@ -14,9 +14,9 @@
 # full history. Register at https://www.coingecko.com/en/api/pricing.
 #
 # Run:
-#   marainer download chainwind/config/download_coingecko_market_cap.yaml
+#   sampleflux run chainwind/config/download_coingecko_market_cap.yaml
 
-processor:
+runnable:
   !class:chainwind.download.DownloadCoinGeckoMarketCap
   coin_ids:
     - bitcoin

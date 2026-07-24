@@ -22,9 +22,9 @@
 #   https://community-api.coinmetrics.io/v4/timeseries/asset-metrics
 #
 # Run (change `asset` to BTC / ETH / ADA / ...):
-#   marainer download chainwind/config/download_coinmetrics_mvrv.yaml
+#   sampleflux run chainwind/config/download_coinmetrics_mvrv.yaml
 
-processor:
+runnable:
   !class:chainwind.download.DownloadCoinMetricsMVRV
   asset: ETH
   out_root: ${DATA_ROOT}/traidwind/macro
