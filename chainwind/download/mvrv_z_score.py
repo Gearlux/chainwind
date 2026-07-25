@@ -99,7 +99,7 @@ class DownloadMVRVZScore:
                 "metric": "mvrv_zscore",
                 "columns": _MVRV_COLUMNS,
                 "start": df["date"].iloc[0].isoformat(),
-                "end": df["date"].iloc[-1].isoformat(),
+                "stop": df["date"].iloc[-1].isoformat(),
                 "source": "bitcoin-data.com.api.v1.mvrv-zscore",
             }
         )

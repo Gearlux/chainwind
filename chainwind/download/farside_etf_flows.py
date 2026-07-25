@@ -167,7 +167,7 @@ class DownloadFarsideETFFlows:
                 "metric": "us_spot_bitcoin_etf_daily_flows_usd_millions",
                 "columns": etf_columns,
                 "start": df["date"].iloc[0].isoformat(),
-                "end": df["date"].iloc[-1].isoformat(),
+                "stop": df["date"].iloc[-1].isoformat(),
                 "source": "farside.bitcoin-etf-flow-all-data",
             }
         )

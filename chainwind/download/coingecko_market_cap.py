@@ -173,7 +173,7 @@ class DownloadCoinGeckoMarketCap:
                 "coin_id": coin_id,
                 "columns": _COINGECKO_COLUMNS,
                 "start": df["date"].iloc[0].isoformat(),
-                "end": df["date"].iloc[-1].isoformat(),
+                "stop": df["date"].iloc[-1].isoformat(),
                 "source": f"coingecko.coins.{coin_id}.market_chart",
             }
         )

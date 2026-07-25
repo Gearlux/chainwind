@@ -106,7 +106,7 @@ class DownloadFearGreed:
                 "metric": "fear_and_greed",
                 "columns": _FEAR_GREED_COLUMNS,
                 "start": df["date"].iloc[0].isoformat(),
-                "end": df["date"].iloc[-1].isoformat(),
+                "stop": df["date"].iloc[-1].isoformat(),
                 "source": "alternative.me.fng",
             }
         )

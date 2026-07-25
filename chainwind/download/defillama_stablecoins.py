@@ -118,7 +118,7 @@ class DownloadDeFiLlamaStablecoins:
                 "metric": "total_stablecoin_circulating_usd",
                 "columns": _DEFILLAMA_STABLECOIN_COLUMNS,
                 "start": df["date"].iloc[0].isoformat(),
-                "end": df["date"].iloc[-1].isoformat(),
+                "stop": df["date"].iloc[-1].isoformat(),
                 "source": "defillama.stablecoincharts.all",
             }
         )
