@@ -22,7 +22,7 @@
 #   https://community-api.coinmetrics.io/v4/timeseries/asset-metrics
 #
 # Run (change `asset` to BTC / ETH / ADA / ...):
-#   sampleflux run chainwind/config/download_coinmetrics_mvrv.yaml
+#   recordstream run chainwind/config/download_coinmetrics_mvrv.yaml
 
 runnable:
   !class:chainwind.download.DownloadCoinMetricsMVRV

@@ -14,7 +14,7 @@
 # price strength.
 #
 # Run:
-#   sampleflux run chainwind/config/download_farside_etf_flows.yaml
+#   recordstream run chainwind/config/download_farside_etf_flows.yaml
 
 runnable:
   !class:chainwind.download.DownloadFarsideETFFlows

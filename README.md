@@ -28,7 +28,7 @@ range rather than reusing the BTC cycle bands.
 
 ```bash
 # MVRV ratio + Z-Score for Ethereum (swap asset for BTC / ADA / ...)
-sampleflux run chainwind/config/download_coinmetrics_mvrv.yaml
+recordstream run chainwind/config/download_coinmetrics_mvrv.yaml
 ```
 
 ## Scope (v0.1.0)

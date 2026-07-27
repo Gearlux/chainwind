@@ -13,7 +13,7 @@
 # (2022 onwards). Source: https://bitcoin-data.com/api/v1/mvrv-zscore.
 #
 # Run:
-#   sampleflux run chainwind/config/download_mvrv_zscore.yaml
+#   recordstream run chainwind/config/download_mvrv_zscore.yaml
 
 runnable:
   !class:chainwind.download.DownloadMVRVZScore

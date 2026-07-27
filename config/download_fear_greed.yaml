@@ -8,7 +8,7 @@
 # lookback_days=0 (default) to fetch the full history.
 #
 # Run:
-#   sampleflux run chainwind/config/download_fear_greed.yaml
+#   recordstream run chainwind/config/download_fear_greed.yaml
 
 runnable:
   !class:chainwind.download.DownloadFearGreed

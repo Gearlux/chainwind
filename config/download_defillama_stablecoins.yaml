@@ -10,7 +10,7 @@
 # Data goes back to ~Nov 2017 (~8.5 years).
 #
 # Run:
-#   sampleflux run chainwind/config/download_defillama_stablecoins.yaml
+#   recordstream run chainwind/config/download_defillama_stablecoins.yaml
 
 runnable:
   !class:chainwind.download.DownloadDeFiLlamaStablecoins
