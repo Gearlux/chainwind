@@ -33,12 +33,7 @@ pipeline {
                 // Internal Gearlux dependencies — installed FIRST with --no-deps
                 // so .[dev] below finds them pre-satisfied instead of hitting PyPI
                 // (Gearlux distribution names are intentionally unpublished on PyPI).
-                sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/loggair.git@main"
-                sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/confluid.git@main"
-                sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/recordstream.git@main"
                 sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/liquifai.git@main"
-                sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/torpaido.git@main"
-                sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/marainer.git@main"
                 sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/traidwind.git@main"
                 sh "${VENV_BIN}/uv pip install -e .[dev]"
                 // Notebook-only extras (matplotlib, jupyter kernels, etc.) live
@@ -58,7 +53,7 @@ pipeline {
                             sh "rm -f black-diff.txt black-checkstyle.xml"
                             def targets = sh(script: "for d in chainwind tests examples; do if [ -d \"\$d\" ] && find \"\$d\" -name '*.py' | grep -q .; then printf \"%s \" \"\$d\"; fi; done || true", returnStdout: true).trim()
                             if (targets) {
-                                def exitCode = sh(script: "set -o pipefail; ${VENV_BIN}/black --check --diff ${targets} 2>&1 | tee black-diff.txt", returnStatus: true)
+                                def exitCode = sh(script: "bash -c 'set -o pipefail; ${VENV_BIN}/black --check --diff ${targets} 2>&1 | tee black-diff.txt'", returnStatus: true)
 
                                 // Generate checkstyle report
                                 sh """${VENV_BIN}/python3 -c "
@@ -107,7 +102,7 @@ with open('black-checkstyle.xml', 'w') as f:
                             sh "rm -f isort-diff.txt isort-checkstyle.xml"
                             def targets = sh(script: "for d in chainwind tests examples; do if [ -d \"\$d\" ] && find \"\$d\" -name '*.py' | grep -q .; then printf \"%s \" \"\$d\"; fi; done || true", returnStdout: true).trim()
                             if (targets) {
-                                def exitCode = sh(script: "set -o pipefail; ${VENV_BIN}/isort --check-only --diff ${targets} 2>&1 | tee isort-diff.txt", returnStatus: true)
+                                def exitCode = sh(script: "bash -c 'set -o pipefail; ${VENV_BIN}/isort --check-only --diff ${targets} 2>&1 | tee isort-diff.txt'", returnStatus: true)
 
                                 // Generate checkstyle report
                                 sh """${VENV_BIN}/python3 -c "
@@ -182,7 +177,7 @@ with open('isort-checkstyle.xml', 'w') as f:
                             sh "rm -f mypy.txt"
                             // tee streams errors to the Jenkins console; pipefail ensures mypy's exit code (not tee's)
                             // propagates so the stage fails visibly when types break.
-                            def exitCode = sh(script: "set -o pipefail; ${VENV_BIN}/mypy . 2>&1 | tee mypy.txt", returnStatus: true)
+                            def exitCode = sh(script: "bash -c 'set -o pipefail; ${VENV_BIN}/mypy . 2>&1 | tee mypy.txt'", returnStatus: true)
                             if (exitCode != 0) {
                                 if (params.REPORT_ALL_WARNINGS) {
                                     unstable("Mypy found type errors. See console output above and Mypy report.")
@@ -247,6 +242,15 @@ with open('isort-checkstyle.xml', 'w') as f:
                             ${VENV_BIN}/python3 "$f"
                         fi
                     done
+                    # Directory examples opt in by shipping a run.py entry point;
+                    # network-dependent / install-only example apps ship no run.py
+                    # and are skipped by construction.
+                    for f in examples/*/run.py; do
+                        if [ -f "$f" ]; then
+                            echo "Verifying $f..."
+                            ${VENV_BIN}/python3 "$f"
+                        fi
+                    done
                 '''
             }
         }
@@ -258,18 +262,19 @@ with open('isort-checkstyle.xml', 'w') as f:
             steps {
                 echo 'Executing project notebooks...'
                 sh '''
-                    shopt -s nullglob
-                    nbs=(notebooks/*.ipynb)
-                    if [ ${#nbs[@]} -eq 0 ]; then
-                        echo "No notebooks to verify."
-                        exit 0
-                    fi
-                    for nb in "${nbs[@]}"; do
+                    # POSIX-clean: dash (typical /bin/sh on Linux) has no shopt/arrays.
+                    # Loop runs zero times when no .ipynb matches (we check found at the end).
+                    found=0
+                    for nb in notebooks/*.ipynb; do
+                        [ -f "$nb" ] || continue
+                        found=1
                         echo "Executing $nb..."
                         ${VENV_BIN}/jupyter nbconvert --to notebook --execute \
                             --output "/tmp/$(basename "$nb" .ipynb)-ci.ipynb" \
                             "$nb"
                     done
+                    [ "$found" -eq 0 ] && echo "No notebooks to verify."
+                    exit 0
                 '''
             }
         }
