@@ -147,20 +147,8 @@ class DownloadFarsideETFFlows:
         data = df[etf_columns].to_numpy(dtype=np.float64)
         ts_ms = df["timestamp_ms"].to_numpy(dtype=np.int64)
         root = zarr.open_group(str(zpath), mode="w")
-        root.create_dataset(
-            "data",
-            data=data,
-            shape=data.shape,
-            chunks=(min(4096, data.shape[0]), data.shape[1]),
-            dtype="float64",
-        )
-        root.create_dataset(
-            "timestamps_ms",
-            data=ts_ms,
-            shape=ts_ms.shape,
-            chunks=(min(4096, ts_ms.shape[0]),),
-            dtype="int64",
-        )
+        root.create_array("data", data=data, chunks=(min(4096, data.shape[0]), data.shape[1]))
+        root.create_array("timestamps_ms", data=ts_ms, chunks=(min(4096, ts_ms.shape[0]),))
         root.attrs.update(
             {
                 "provider": "farside.co.uk",

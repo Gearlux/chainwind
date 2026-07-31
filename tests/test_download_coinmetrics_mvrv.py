@@ -138,8 +138,8 @@ class TestDownloadCoinMetricsMVRV:
         ts = np.array([int(datetime.now(timezone.utc).timestamp() * 1000)], dtype=np.int64)
         vals = np.array([[1.5, 0.3]], dtype=np.float64)
         grp = zarr.open_group(str(zpath), mode="w")
-        grp.create_dataset("data", data=vals, shape=vals.shape, dtype="float64")
-        grp.create_dataset("timestamps_ms", data=ts, shape=ts.shape, dtype="int64")
+        grp.create_array("data", data=vals)
+        grp.create_array("timestamps_ms", data=ts)
         grp.attrs.update({"columns": ["mvrv", "mvrv_zscore"]})
 
         requests_mock.get(URL, status_code=500)  # would fail if called

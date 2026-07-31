@@ -110,8 +110,8 @@ def test_tracker_freshness_empty_zarr(tmp_path: Path) -> None:
 
     zp = tmp_path / "empty.zarr"
     root = zarr.open_group(str(zp), mode="w")
-    root.create_dataset("timestamps_ms", data=np.array([], dtype="int64"), shape=(0,), chunks=(1,), dtype="int64")
-    root.create_dataset("data", data=np.zeros((0, 1)), shape=(0, 1), chunks=(1, 1), dtype="float64")
+    root.create_array("timestamps_ms", data=np.array([]), chunks=(1,))
+    root.create_array("data", data=np.zeros((0, 1)), chunks=(1, 1))
     root.attrs.update({"columns": ["v"]})
     info = tracker_freshness(_spec(zp, ("v",)))
     assert info["exists"] is True

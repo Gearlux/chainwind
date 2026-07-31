@@ -89,8 +89,8 @@ class TestDownloadFarsideETFFlows:
         ts = np.array([int(datetime.now(timezone.utc).timestamp() * 1000)], dtype=np.int64)
         vals = np.array([[100.0, 200.0, 300.0]], dtype=np.float64)
         grp = zarr.open_group(str(zpath), mode="w")
-        grp.create_dataset("data", data=vals, shape=vals.shape, dtype="float64")
-        grp.create_dataset("timestamps_ms", data=ts, shape=ts.shape, dtype="int64")
+        grp.create_array("data", data=vals)
+        grp.create_array("timestamps_ms", data=ts)
         grp.attrs.update({"columns": ["IBIT", "FBTC", "Total"]})
 
         requests_mock.get(self.URL, status_code=500)  # fail if called

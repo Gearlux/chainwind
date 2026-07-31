@@ -30,8 +30,8 @@ def _write_zarr(
     ts = np.asarray(ts_ms, dtype="int64")
     path.parent.mkdir(parents=True, exist_ok=True)
     root = zarr.open_group(str(path), mode="w")
-    root.create_dataset("data", data=arr, shape=arr.shape, chunks=arr.shape, dtype="float64")
-    root.create_dataset("timestamps_ms", data=ts, shape=ts.shape, chunks=ts.shape, dtype="int64")
+    root.create_array("data", data=arr, chunks=arr.shape)
+    root.create_array("timestamps_ms", data=ts, chunks=ts.shape)
     root.attrs.update({"columns": list(columns)})
 
 
