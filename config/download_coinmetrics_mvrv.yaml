@@ -25,8 +25,8 @@
 #   recordstream run chainwind/config/download_coinmetrics_mvrv.yaml
 
 runnable:
-  !class:chainwind.download.DownloadCoinMetricsMVRV
+  _target_: chainwind.download.DownloadCoinMetricsMVRV
   asset: ETH
-  out_root: ${DATA_ROOT}/traidwind/macro
+  out_root: ${env:DATA_ROOT}/traidwind/macro
   skip_if_fresh: true
   freshness_tolerance_hours: 24

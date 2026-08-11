@@ -17,7 +17,7 @@
 #   recordstream run chainwind/config/download_coingecko_market_cap.yaml
 
 runnable:
-  !class:chainwind.download.DownloadCoinGeckoMarketCap
+  _target_: chainwind.download.DownloadCoinGeckoMarketCap
   coin_ids:
     - bitcoin
     - ethereum
@@ -41,7 +41,7 @@ runnable:
     - leo-token
   days: 365   # free public tier max; set to "max" if COINGECKO_API_KEY is configured
   vs_currency: usd
-  out_root: ${DATA_ROOT}/traidwind/macro
+  out_root: ${env:DATA_ROOT}/traidwind/macro
   skip_if_fresh: true
   freshness_tolerance_hours: 24
   # CoinGecko anonymous tier is throttled to ~5-15 calls/min. 12s pacing

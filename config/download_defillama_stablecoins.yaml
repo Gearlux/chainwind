@@ -13,7 +13,7 @@
 #   recordstream run chainwind/config/download_defillama_stablecoins.yaml
 
 runnable:
-  !class:chainwind.download.DownloadDeFiLlamaStablecoins
-  out_root: ${DATA_ROOT}/traidwind/macro
+  _target_: chainwind.download.DownloadDeFiLlamaStablecoins
+  out_root: ${env:DATA_ROOT}/traidwind/macro
   skip_if_fresh: true
   freshness_tolerance_hours: 24
