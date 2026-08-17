@@ -15,8 +15,7 @@
 # Run:
 #   recordstream run chainwind/config/download_mvrv_zscore.yaml
 
-runnable:
-  _target_: chainwind.download.DownloadMVRVZScore
+runnable: !class:chainwind.download.DownloadMVRVZScore
   out_root: ${env:DATA_ROOT}/traidwind/macro
   skip_if_fresh: true
   freshness_tolerance_hours: 24

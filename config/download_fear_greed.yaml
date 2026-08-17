@@ -10,8 +10,7 @@
 # Run:
 #   recordstream run chainwind/config/download_fear_greed.yaml
 
-runnable:
-  _target_: chainwind.download.DownloadFearGreed
+runnable: !class:chainwind.download.DownloadFearGreed
   out_root: ${env:DATA_ROOT}/traidwind/macro
   lookback_days: 0   # 0 = all available history
   skip_if_fresh: true

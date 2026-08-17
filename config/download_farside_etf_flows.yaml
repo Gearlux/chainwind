@@ -16,8 +16,7 @@
 # Run:
 #   recordstream run chainwind/config/download_farside_etf_flows.yaml
 
-runnable:
-  _target_: chainwind.download.DownloadFarsideETFFlows
+runnable: !class:chainwind.download.DownloadFarsideETFFlows
   out_root: ${env:DATA_ROOT}/traidwind/macro
   skip_if_fresh: true
   freshness_tolerance_hours: 24

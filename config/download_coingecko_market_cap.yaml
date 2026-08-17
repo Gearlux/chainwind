@@ -16,8 +16,7 @@
 # Run:
 #   recordstream run chainwind/config/download_coingecko_market_cap.yaml
 
-runnable:
-  _target_: chainwind.download.DownloadCoinGeckoMarketCap
+runnable: !class:chainwind.download.DownloadCoinGeckoMarketCap
   coin_ids:
     - bitcoin
     - ethereum
