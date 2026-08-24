@@ -39,7 +39,7 @@ flake8.txt
 mypy.txt
 coverage.xml
 coverage-sources.zip
-test-report.xml
+*test-report.xml
 
 # Frontend
 chainwind/frontend/node_modules/
