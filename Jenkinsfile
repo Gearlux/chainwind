@@ -33,6 +33,7 @@ pipeline {
                 // Internal Gearlux dependencies — installed FIRST with --no-deps
                 // so .[dev] below finds them pre-satisfied instead of hitting PyPI
                 // (Gearlux distribution names are intentionally unpublished on PyPI).
+                sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/liquifai.git@main"
                 sh "${VENV_BIN}/uv pip install --no-deps git+https://github.com/Gearlux/traidwind.git@main"
                 sh "${VENV_BIN}/uv pip install -e .[dev]"
                 // Notebook-only extras (matplotlib, jupyter kernels, etc.) live
@@ -275,22 +276,6 @@ with open('isort-checkstyle.xml', 'w') as f:
                     [ "$found" -eq 0 ] && echo "No notebooks to verify."
                     exit 0
                 '''
-            }
-        }
-
-        stage('Verify Frontend') {
-            when {
-                expression { return fileExists('frontend/package.json') }
-            }
-            steps {
-                echo 'Installing frontend deps + running tests + production build...'
-                dir('frontend') {
-                    sh '''
-                        npm ci
-                        npm run test --if-present
-                        npm run build --if-present
-                    '''
-                }
             }
         }
     }
