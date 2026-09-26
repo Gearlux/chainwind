@@ -17,10 +17,10 @@ jobs:
     name: Quality Gates
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Mint GitHub App token for private Gearlux deps
       id: app-token
-      uses: actions/create-github-app-token@v1
+      uses: actions/create-github-app-token@v3
       with:
         app-id: ${{ secrets.GEARLUX_APP_ID }}
         private-key: ${{ secrets.GEARLUX_APP_PRIVATE_KEY }}
@@ -28,11 +28,11 @@ jobs:
     - name: Configure git auth for Gearlux
       run: git config --global url."https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/".insteadOf "https://github.com/"
     - name: Set up Python 3.12
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v7
       with:
         python-version: "3.12"
     - name: Install uv
-      uses: astral-sh/setup-uv@v4
+      uses: astral-sh/setup-uv@v7
     - name: Install dependencies
       run: |
         
@@ -54,10 +54,10 @@ jobs:
     needs: [quality-gates]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Mint GitHub App token for private Gearlux deps
       id: app-token
-      uses: actions/create-github-app-token@v1
+      uses: actions/create-github-app-token@v3
       with:
         app-id: ${{ secrets.GEARLUX_APP_ID }}
         private-key: ${{ secrets.GEARLUX_APP_PRIVATE_KEY }}
@@ -65,11 +65,11 @@ jobs:
     - name: Configure git auth for Gearlux
       run: git config --global url."https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/".insteadOf "https://github.com/"
     - name: Set up Python 3.12
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v7
       with:
         python-version: "3.12"
     - name: Install uv
-      uses: astral-sh/setup-uv@v4
+      uses: astral-sh/setup-uv@v7
     - name: Install dependencies
       run: |
         
@@ -85,7 +85,7 @@ jobs:
           echo "No tests found. Skipping."
         fi
     - name: Upload Test Results
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: test-results
         path: test-report.xml
@@ -96,10 +96,10 @@ jobs:
     needs: [unit-tests]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Mint GitHub App token for private Gearlux deps
       id: app-token
-      uses: actions/create-github-app-token@v1
+      uses: actions/create-github-app-token@v3
       with:
         app-id: ${{ secrets.GEARLUX_APP_ID }}
         private-key: ${{ secrets.GEARLUX_APP_PRIVATE_KEY }}
@@ -107,11 +107,11 @@ jobs:
     - name: Configure git auth for Gearlux
       run: git config --global url."https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/".insteadOf "https://github.com/"
     - name: Set up Python 3.12
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v7
       with:
         python-version: "3.12"
     - name: Install uv
-      uses: astral-sh/setup-uv@v4
+      uses: astral-sh/setup-uv@v7
     - name: Install dependencies
       run: |
         
@@ -142,10 +142,10 @@ jobs:
     needs: [unit-tests]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Mint GitHub App token for private Gearlux deps
       id: app-token
-      uses: actions/create-github-app-token@v1
+      uses: actions/create-github-app-token@v3
       with:
         app-id: ${{ secrets.GEARLUX_APP_ID }}
         private-key: ${{ secrets.GEARLUX_APP_PRIVATE_KEY }}
@@ -153,11 +153,11 @@ jobs:
     - name: Configure git auth for Gearlux
       run: git config --global url."https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/".insteadOf "https://github.com/"
     - name: Set up Python 3.12
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v7
       with:
         python-version: "3.12"
     - name: Install uv
-      uses: astral-sh/setup-uv@v4
+      uses: astral-sh/setup-uv@v7
     - name: Install dependencies
       run: |
         
