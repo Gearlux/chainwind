@@ -14,7 +14,7 @@ The FastAPI server requires the ``[http]`` extra (``fastapi`` + ``uvicorn``); th
 built from ``chainwind/frontend`` into ``chainwind/frontend/dist``.
 """
 
-__version__ = "0.1.0"
+from importlib.metadata import PackageNotFoundError, version
 
 from chainwind.coins import BUILTIN_COINS, CoinSpec, get_coin, list_coins
 from chainwind.discovery import discover_trackers
@@ -38,6 +38,13 @@ from chainwind.trackers import (
     list_trackers,
 )
 from chainwind.update import freshness_report, update_all, update_tracker
+
+try:
+    # Single source of truth: the installed distribution's metadata, i.e. pyproject.toml's
+    # `version` (the distribution is `chainwind`). Never type the number in here as well.
+    __version__ = version("chainwind")
+except PackageNotFoundError:  # pragma: no cover - uninstalled source checkout
+    __version__ = "0.0.0.dev0"
 
 __all__ = [
     "CoinSpec",
