@@ -1,12 +1,12 @@
 [project]
 name = "chainwind"
 version = "0.1.0"
-description = "(logflow / confluid / liquifai) crypto-coin data viewer extending traidwind's viz layer."
+description = "(loggair / confluid / liquifai) crypto-coin data viewer extending traidwind's viz layer."
 authors = [{name = "Taidal"}]
 license = {text = "MIT"}
 dependencies = [
     "liquifai>=0.1.0",
-    "log-flow>=0.1.0",
+    "loggair>=0.1.0",
     "confluid>=0.1.0",
     "traidwind>=0.2.0",
     "numpy>=1.26",
@@ -17,6 +17,12 @@ dependencies = [
 requires-python = ">=3.12"
 
 [project.optional-dependencies]
+# Local UI server (`chainwind serve`). Kept optional so a headless / data-only
+# install (just the downloaders + registry) doesn't pull a web stack.
+http = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+]
 dev = [
     "black>=24.0.0,<25.0.0",
     "isort>=5.13.0,<6.0.0",
@@ -25,10 +31,20 @@ dev = [
     "pytest>=7.0.0,<9.0.0",
     "pytest-cov>=4.0.0,<7.0.0",
     "requests-mock>=1.11",
+    # Server tests need FastAPI + its TestClient transport (httpx).
+    "fastapi>=0.110",
+    "httpx>=0.27",
 ]
 
 [project.scripts]
 chainwind = "chainwind.cli:main"
+
+# Liquifai app registration: lets `liquifai-install-completions` discover this
+# CLI via an instant entry-point metadata read instead of executing the binary
+# (subprocess probe, 15 s timeout each). Name = the app/binary name; value =
+# the LiquifyApp instance. Entry-point changes need an editable reinstall.
+[project.entry-points."liquifai.apps"]
+chainwind = "chainwind.cli:app"
 
 [tool.setuptools.packages.find]
 where = ["."]
@@ -75,9 +91,12 @@ explicit_package_bases = true
 module = [
     "liquifai.*",
     "confluid.*",
-    "logflow.*",
+    "loggair.*",
     "requests.*",
     "traidwind.*",
     "zarr.*",
+    "fastapi.*",
+    "starlette.*",
+    "uvicorn.*",
 ]
 ignore_missing_imports = true

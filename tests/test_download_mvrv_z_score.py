@@ -22,7 +22,11 @@ class TestDownloadMVRVZScore:
         return [{"d": d, "unixTs": t, "mvrvZscore": v} for d, t, v in rows]
 
     def test_run_writes_zarr(self, tmp_path: Path, requests_mock: Any) -> None:
-        rows = [("2024-01-01", 1704067200, 0.5), ("2024-01-02", 1704153600, 0.7), ("2024-01-03", 1704240000, 0.9)]
+        rows = [
+            ("2024-01-01", 1704067200, 0.5),
+            ("2024-01-02", 1704153600, 0.7),
+            ("2024-01-03", 1704240000, 0.9),
+        ]
         requests_mock.get(self.URL, json=self._payload(rows))
         d = DownloadMVRVZScore(out_root=tmp_path, skip_if_fresh=False)
         d.run()
@@ -48,8 +52,8 @@ class TestDownloadMVRVZScore:
         ts = np.array([int(datetime.now(timezone.utc).timestamp() * 1000)], dtype=np.int64)
         vals = np.array([[1.0]], dtype=np.float64)
         grp = zarr.open_group(str(zpath), mode="w")
-        grp.create_dataset("data", data=vals, shape=vals.shape, dtype="float64")
-        grp.create_dataset("timestamps_ms", data=ts, shape=ts.shape, dtype="int64")
+        grp.create_array("data", data=vals)
+        grp.create_array("timestamps_ms", data=ts)
         grp.attrs.update({"columns": ["mvrv_zscore"]})
 
         # Would fail if called.
@@ -60,7 +64,11 @@ class TestDownloadMVRVZScore:
 
     def test_sorted_chronologically(self, tmp_path: Path, requests_mock: Any) -> None:
         """API may return rows out of order; output zarr MUST be ascending."""
-        rows = [("2024-01-03", 1704240000, 0.9), ("2024-01-01", 1704067200, 0.5), ("2024-01-02", 1704153600, 0.7)]
+        rows = [
+            ("2024-01-03", 1704240000, 0.9),
+            ("2024-01-01", 1704067200, 0.5),
+            ("2024-01-02", 1704153600, 0.7),
+        ]
         requests_mock.get(self.URL, json=self._payload(rows))
         d = DownloadMVRVZScore(out_root=tmp_path, skip_if_fresh=False)
         d.run()

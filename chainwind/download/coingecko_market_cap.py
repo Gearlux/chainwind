@@ -9,7 +9,7 @@ import confluid
 import numpy as np
 import pandas as pd
 import zarr
-from logflow import get_logger
+from loggair import get_logger
 from traidwind.paths import _expand, _zarr_is_fresh
 
 logger = get_logger(__name__)
@@ -133,7 +133,15 @@ class DownloadCoinGeckoMarketCap:
         # Each list is [[ts_ms, value], ...]. Join on timestamp; CG aligns
         # them so the lists are the same length, but guard anyway.
         n = min(len(mcaps), len(prices), len(volumes))
-        rows = [[int(mcaps[i][0]), float(mcaps[i][1]), float(prices[i][1]), float(volumes[i][1])] for i in range(n)]
+        rows = [
+            [
+                int(mcaps[i][0]),
+                float(mcaps[i][1]),
+                float(prices[i][1]),
+                float(volumes[i][1]),
+            ]
+            for i in range(n)
+        ]
         df = pd.DataFrame(rows, columns=["timestamp_ms", "market_cap", "price", "total_volume"])
         df = df.drop_duplicates(subset="timestamp_ms").sort_values("timestamp_ms").reset_index(drop=True)
         df["date"] = pd.to_datetime(df["timestamp_ms"], unit="ms", utc=True)
@@ -145,27 +153,15 @@ class DownloadCoinGeckoMarketCap:
         data = df[_COINGECKO_COLUMNS].to_numpy(dtype=np.float64)
         ts_ms = df["timestamp_ms"].to_numpy(dtype=np.int64)
         root = zarr.open_group(str(zpath), mode="w")
-        root.create_dataset(
-            "data",
-            data=data,
-            shape=data.shape,
-            chunks=(min(4096, data.shape[0]), 3),
-            dtype="float64",
-        )
-        root.create_dataset(
-            "timestamps_ms",
-            data=ts_ms,
-            shape=ts_ms.shape,
-            chunks=(min(4096, ts_ms.shape[0]),),
-            dtype="int64",
-        )
+        root.create_array("data", data=data, chunks=(min(4096, data.shape[0]), 3))
+        root.create_array("timestamps_ms", data=ts_ms, chunks=(min(4096, ts_ms.shape[0]),))
         root.attrs.update(
             {
                 "provider": "coingecko",
                 "coin_id": coin_id,
                 "columns": _COINGECKO_COLUMNS,
                 "start": df["date"].iloc[0].isoformat(),
-                "end": df["date"].iloc[-1].isoformat(),
+                "stop": df["date"].iloc[-1].isoformat(),
                 "source": f"coingecko.coins.{coin_id}.market_chart",
             }
         )

@@ -8,11 +8,10 @@
 # lookback_days=0 (default) to fetch the full history.
 #
 # Run:
-#   marainer download chainwind/config/download_fear_greed.yaml
+#   recordstream run chainwind/config/download_fear_greed.yaml
 
-processor:
-  !class:chainwind.download.DownloadFearGreed
-  out_root: ${DATA_ROOT}/traidwind/macro
+runnable: !class:chainwind.download.DownloadFearGreed
+  out_root: ${env:DATA_ROOT}/traidwind/macro
   lookback_days: 0   # 0 = all available history
   skip_if_fresh: true
   freshness_tolerance_hours: 24

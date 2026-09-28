@@ -7,7 +7,7 @@ import confluid
 import numpy as np
 import pandas as pd
 import zarr
-from logflow import get_logger
+from loggair import get_logger
 from traidwind.paths import _expand, _zarr_is_fresh
 
 logger = get_logger(__name__)
@@ -26,7 +26,14 @@ _FARSIDE_USER_AGENT = (
 )
 # Summary rows at the bottom of the Farside table (Average / Maximum / Minimum
 # / Total / etc.) that look like data rows but aren't dated observations.
-_FARSIDE_SUMMARY_ROW_LABELS = {"average", "maximum", "minimum", "total", "stdev", "median"}
+_FARSIDE_SUMMARY_ROW_LABELS = {
+    "average",
+    "maximum",
+    "minimum",
+    "total",
+    "stdev",
+    "median",
+}
 
 
 @confluid.configurable
@@ -69,7 +76,11 @@ class DownloadFarsideETFFlows:
             logger.info(f"[skip] bitcoin_etf_flows - zarr already fresh at {zpath}")
             return
         zpath.parent.mkdir(parents=True, exist_ok=True)
-        resp = requests.get(_FARSIDE_ETF_FLOWS_URL, headers={"User-Agent": _FARSIDE_USER_AGENT}, timeout=30)
+        resp = requests.get(
+            _FARSIDE_ETF_FLOWS_URL,
+            headers={"User-Agent": _FARSIDE_USER_AGENT},
+            timeout=30,
+        )
         resp.raise_for_status()
         df = self._parse_farside_html(resp.text)
         if df.empty:
@@ -136,27 +147,15 @@ class DownloadFarsideETFFlows:
         data = df[etf_columns].to_numpy(dtype=np.float64)
         ts_ms = df["timestamp_ms"].to_numpy(dtype=np.int64)
         root = zarr.open_group(str(zpath), mode="w")
-        root.create_dataset(
-            "data",
-            data=data,
-            shape=data.shape,
-            chunks=(min(4096, data.shape[0]), data.shape[1]),
-            dtype="float64",
-        )
-        root.create_dataset(
-            "timestamps_ms",
-            data=ts_ms,
-            shape=ts_ms.shape,
-            chunks=(min(4096, ts_ms.shape[0]),),
-            dtype="int64",
-        )
+        root.create_array("data", data=data, chunks=(min(4096, data.shape[0]), data.shape[1]))
+        root.create_array("timestamps_ms", data=ts_ms, chunks=(min(4096, ts_ms.shape[0]),))
         root.attrs.update(
             {
                 "provider": "farside.co.uk",
                 "metric": "us_spot_bitcoin_etf_daily_flows_usd_millions",
                 "columns": etf_columns,
                 "start": df["date"].iloc[0].isoformat(),
-                "end": df["date"].iloc[-1].isoformat(),
+                "stop": df["date"].iloc[-1].isoformat(),
                 "source": "farside.bitcoin-etf-flow-all-data",
             }
         )

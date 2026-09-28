@@ -14,10 +14,9 @@
 # price strength.
 #
 # Run:
-#   marainer download chainwind/config/download_farside_etf_flows.yaml
+#   recordstream run chainwind/config/download_farside_etf_flows.yaml
 
-processor:
-  !class:chainwind.download.DownloadFarsideETFFlows
-  out_root: ${DATA_ROOT}/traidwind/macro
+runnable: !class:chainwind.download.DownloadFarsideETFFlows
+  out_root: ${env:DATA_ROOT}/traidwind/macro
   skip_if_fresh: true
   freshness_tolerance_hours: 24

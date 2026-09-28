@@ -39,9 +39,10 @@ flake8.txt
 mypy.txt
 coverage.xml
 coverage-sources.zip
-test-report.xml
+*test-report.xml
 
 # Frontend
 chainwind/frontend/node_modules/
 chainwind/frontend/.vite/
 # NB: chainwind/frontend/dist/ is COMMITTED so `chainwind serve` works without npm.
+/pyrightconfig.json

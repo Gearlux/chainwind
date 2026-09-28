@@ -42,7 +42,11 @@ class TestDownloadCoinGeckoMarketCap:
         assert zpath.exists()
         grp = zarr.open_group(str(zpath), mode="r")
         assert cast(Any, grp["data"]).shape == (3, 3)
-        assert list(cast(Any, grp.attrs["columns"])) == ["market_cap", "price", "total_volume"]
+        assert list(cast(Any, grp.attrs["columns"])) == [
+            "market_cap",
+            "price",
+            "total_volume",
+        ]
         assert grp.attrs["coin_id"] == "bitcoin"
         assert grp.attrs["provider"] == "coingecko"
         assert list(cast(Any, grp["data"])[:, 0]) == [1.0e12, 1.1e12, 1.05e12]
@@ -129,7 +133,11 @@ class TestDownloadCoinGeckoMarketCap:
         monkeypatch.delenv("COINGECKO_API_KEY", raising=False)
         requests_mock.get(self.FREE_URL, json=self._payload([(1, 1.0, 1.0, 1.0)]))
         d = DownloadCoinGeckoMarketCap(
-            coin_ids=["bitcoin"], out_root=tmp_path, days=90, vs_currency="eur", skip_if_fresh=False
+            coin_ids=["bitcoin"],
+            out_root=tmp_path,
+            days=90,
+            vs_currency="eur",
+            skip_if_fresh=False,
         )
         d.run()
         assert requests_mock.last_request.qs.get("days") == ["90"]

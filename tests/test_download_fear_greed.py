@@ -40,7 +40,10 @@ class TestDownloadFearGreed:
         now = int(datetime.now(timezone.utc).timestamp())
         day = 86400
         # Newest-first payload: [today, yesterday, two-days-ago].
-        requests_mock.get(self.URL, json=self._payload([(now, 70), (now - day, 60), (now - 2 * day, 55)]))
+        requests_mock.get(
+            self.URL,
+            json=self._payload([(now, 70), (now - day, 60), (now - 2 * day, 55)]),
+        )
 
         d = DownloadFearGreed(out_root=tmp_path, skip_if_fresh=False)
         d.run()
@@ -77,8 +80,8 @@ class TestDownloadFearGreed:
         ts = np.array([int(datetime.now(timezone.utc).timestamp() * 1000)], dtype=np.int64)
         vals = np.array([[55.0]], dtype=np.float64)
         grp = zarr.open_group(str(zpath), mode="w")
-        grp.create_dataset("data", data=vals, shape=vals.shape, dtype="float64")
-        grp.create_dataset("timestamps_ms", data=ts, shape=ts.shape, dtype="int64")
+        grp.create_array("data", data=vals)
+        grp.create_array("timestamps_ms", data=ts)
         grp.attrs.update({"columns": ["value"]})
 
         # If the HTTP call fires the test fails (no mock registered = real network attempt).

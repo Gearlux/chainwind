@@ -7,7 +7,7 @@ import confluid
 import numpy as np
 import pandas as pd
 import zarr
-from logflow import get_logger
+from loggair import get_logger
 from traidwind.paths import _expand, _zarr_is_fresh
 
 logger = get_logger(__name__)
@@ -79,27 +79,15 @@ class DownloadMVRVZScore:
         values = df[_MVRV_COLUMNS].to_numpy(dtype=np.float64)
         ts_ms = df["timestamp_ms"].to_numpy(dtype=np.int64)
         root = zarr.open_group(str(zpath), mode="w")
-        root.create_dataset(
-            "data",
-            data=values,
-            shape=values.shape,
-            chunks=(min(4096, values.shape[0]), 1),
-            dtype="float64",
-        )
-        root.create_dataset(
-            "timestamps_ms",
-            data=ts_ms,
-            shape=ts_ms.shape,
-            chunks=(min(4096, ts_ms.shape[0]),),
-            dtype="int64",
-        )
+        root.create_array("data", data=values, chunks=(min(4096, values.shape[0]), 1))
+        root.create_array("timestamps_ms", data=ts_ms, chunks=(min(4096, ts_ms.shape[0]),))
         root.attrs.update(
             {
                 "provider": "bitcoin-data.com",
                 "metric": "mvrv_zscore",
                 "columns": _MVRV_COLUMNS,
                 "start": df["date"].iloc[0].isoformat(),
-                "end": df["date"].iloc[-1].isoformat(),
+                "stop": df["date"].iloc[-1].isoformat(),
                 "source": "bitcoin-data.com.api.v1.mvrv-zscore",
             }
         )
