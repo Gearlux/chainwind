@@ -1,6 +1,6 @@
 """Chainwind — crypto trackers & indicators viewer.
 
-Extends :mod:`traidwind`'s market-agnostic visualization layer with:
+Builds on :mod:`traidwind`'s downloaders and zarr store paths with:
 
 - crypto-specific downloaders (CoinGecko, fear/greed, DeFiLlama, Farside ETF flows, MVRV Z-score),
 - per-coin metadata (:class:`CoinSpec`) and a builtin registry,

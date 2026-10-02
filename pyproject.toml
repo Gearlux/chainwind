@@ -1,7 +1,7 @@
 [project]
 name = "chainwind"
 version = "0.1.0"
-description = "(loggair / confluid / liquifai) crypto-coin data viewer extending traidwind's viz layer."
+description = "(loggair / confluid / liquifai) crypto-coin data viewer built on traidwind's downloaders."
 authors = [{name = "Taidal"}]
 license = {text = "MIT"}
 dependencies = [

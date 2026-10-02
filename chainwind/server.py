@@ -162,7 +162,7 @@ def build_app(web_dist: Optional[Path] = None) -> Any:
 def serve(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT, open_browser: bool = True) -> None:
     """Run the local UI server (blocking). Binds to ``127.0.0.1`` and opens the browser.
 
-    Host/port also fall back to ``CHAINWIND_HTTP_HOST`` / ``CHAINWIND_HTTP_PORT``.
+    ``CHAINWIND_HTTP_HOST`` / ``CHAINWIND_HTTP_PORT``, when set, take precedence over ``host`` / ``port``.
     """
     import uvicorn
 

@@ -1,8 +1,8 @@
 # chainwind
 
-Crypto **trackers & indicators** viewer. Extends [traidwind](https://github.com/Gearlux/traidwind)'s
-visualization layer with crypto-specific data sources (CoinGecko, fear/greed, DeFiLlama, Farside ETF
-flows, MVRV Z-score) and a local web UI that displays each tracked time series.
+Crypto **trackers & indicators** viewer. Builds on [traidwind](https://github.com/Gearlux/traidwind)'s
+downloaders and zarr store paths with crypto-specific data sources (CoinGecko, fear/greed, DeFiLlama,
+Farside ETF flows, MVRV Z-score) and a local web UI that displays each tracked time series.
 
 A **tracker** is one displayable series — a price chart or an indicator. Each tracker ties together
 where its data lives on disk (a zarr written by one of the downloaders), how to (re)fetch it, and how
@@ -86,6 +86,9 @@ The catalog is **discovered from disk** — `chainwind catalog` shows the ids yo
 `coingecko-ethereum`, `fred-WM2NS`). Derived datasets (dominance / SSR / liquidations) are
 **view-only** — they display but can't be updated.
 
+`chainwind serve` binds to `127.0.0.1:8770`. `CHAINWIND_HTTP_HOST` and `CHAINWIND_HTTP_PORT` set the
+bind address instead; when set, they take precedence over `--host` / `--port`.
+
 Data lands under `$DATA_ROOT` (see the `config/download_*.yaml` headers for exact paths) — make sure
 `DATA_ROOT` is exported (e.g. `source project.bashrc` at the workspace root) before running.
 
@@ -114,7 +117,7 @@ update` builds and runs it (setting `skip_if_fresh=False` under `--force`).
 ## Architecture
 
 - **traidwind** owns the market-agnostic download/zarr/path helpers (`traidwind.paths`,
-  `DownloadOHLCV`) and the viz primitives chainwind builds on.
+  `DownloadOHLCV`) that chainwind builds on.
 - **chainwind** adds the crypto-website downloaders, the `TrackerSpec` registry
   (`chainwind/trackers.py`), the zarr→JSON series reader (`chainwind/series.py`), the update/freshness
   methods (`chainwind/update.py`), the FastAPI server (`chainwind/server.py`), and the React UI
