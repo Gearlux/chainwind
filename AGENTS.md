@@ -1,16 +1,63 @@
 # Chainwind Mandates
 
+Rules only. Usage is in the [README](README.md). Root `AGENTS.md` rules are not repeated here.
+
 ## Current state
 
-Crypto-coin data viewer extending traidwind's viz layer: the six crypto/on-chain downloaders, the `CoinSpec` + `TrackerSpec` registries, and disk-truth `discovery`. CLI: `list-coins`, `list-trackers`, `catalog`, `freshness`, `update`, `serve`. FastAPI server + React SPA ship; per-coin tab and portfolio scaffold follow. Submodule `active = false`; SOL MVRV unsupported (both below).
+A crypto-coin data viewer built on traidwind's downloaders and path helpers. The pieces:
+- `chainwind/download/`: the six crypto and on-chain downloaders.
+- `coins.py` (`CoinSpec`) and `trackers.py` (`TrackerSpec`): the two registries.
+- `discovery.py`: the catalog scanned from disk.
+- `series.py` (zarr to JSON), `update.py` (update and freshness).
+- `server.py` (local FastAPI) and `frontend/` (React SPA).
 
-- **Extension, Not Fork:** Chainwind extends traidwind's visualization layer for crypto-specific data; it MUST NOT duplicate traidwind's download/backtest plumbing. Reuse `FreqtradeAdapter`, the YAML→JSON `config` translator, and the indicator/overlay registry.
-- **Crypto Downloaders:** `DownloadCoinGeckoMarketCap`, `DownloadDeFiLlamaStablecoins`, `DownloadFarsideETFFlows`, `DownloadFearGreed`, `DownloadMVRVZScore` are the canonical crypto-website / on-chain sources, plus `DownloadCoinMetricsMVRV` (the free, no-auth **multi-asset** MVRV source — see next mandate). CCXT exchange data and non-crypto macro (FRED, yfinance) stay in traidwind — don't move them here.
-- **MVRV Is Two Downloaders, Split by Coverage:** `DownloadMVRVZScore` is **Bitcoin-only** (bitcoin-data.com's free `/api/v1/mvrv-zscore`, single `[mvrv_zscore]` column). `DownloadCoinMetricsMVRV` is the **multi-asset** path (CoinMetrics community API, free + no auth): it fetches the MVRV ratio (`CapMVRVCur`) + market cap (`CapMrktCurUSD`) for one `asset` and derives the Z-Score locally, writing `[mvrv, mvrv_zscore]` to `coinmetrics/<asset>_mvrv.zarr`. Covers BTC/ETH/ADA + ~150 assets but **NOT Solana** (no free realized-cap source for the account-based chain — an unsupported/gated asset logs `[unsupported]` and writes nothing, never raises). The two providers' Z-Scores are NOT scale-comparable (different realized-cap methodology + stdev window), so the BTC cycle-band `zones` do NOT transfer to a CoinMetrics-derived series — chart the ratio (cross-coin comparable) and attach no zones unless calibrated per asset.
-- **CoinSpec Registry:** Per-coin metadata (data sources, indicator presets, on-chain overlays) lives in `coins.CoinSpec`. BTC / ETH / SOL are the builtin trio; new coins MUST extend the registry, never inline metadata into UI code.
-- **TrackerSpec Registry:** A *tracker* is one displayable series (a price chart or an indicator). Its metadata — on-disk `zarr_path`, `value_columns`, `chart_lib`/`chart_type`, value `zones`, and the `downloader_factory` — lives in `trackers.TrackerSpec`; UI code (React, CLI, API) MUST read `list_trackers()`/`get_tracker()` rather than inlining tracker ids, paths, or chart choices (same rule as `CoinSpec`). The `downloader_factory` is the SINGLE source of truth for a tracker's update path: `chainwind update` builds and runs it (reusing the existing `@configurable` downloaders — extension, not new plumbing), flipping `skip_if_fresh=False` under `--force`. Closed `Literal`s (`category`/`chart_lib`/`chart_type`) keep the registry machine-introspectable. A `TrackerSpec` MAY reference a `CoinSpec` via its `coin` field but is a distinct concept (a coin is an asset; a tracker is a chartable dataset). New trackers extend `BUILTIN_TRACKERS`.
-- **Catalog Is Disk Truth (discovery):** The browsable catalog is built by scanning the on-disk zarr tree under `$DATA_ROOT` (`discovery.discover_trackers` → one `TrackerSpec` per dataset), NOT a hardcoded list — so it always reflects what's actually downloaded (OHLCV per pair × market_type × timeframe, every CoinGecko coin, on-chain/sentiment/macro/funding/liquidations). `trackers.catalog()` = discovery merged with the curated `BUILTIN_TRACKERS` overlay (matched by `zarr_path`, which supplies friendly ids, zones, and `featured=True`); a curated dataset not yet on disk still lists (shows *missing*). Path↔identifier conventions in discovery MUST stay the exact inverse of the writers (`traidwind.paths._zarr_path` etc.) — e.g. disk `BTC_USDT` / `BTC_USDT:USDT` → CCXT `BTC/USDT` / `BTC/USDT:USDT` by replacing the FIRST `_` with `/`; only `spot/`/`futures/` subdirs are walked (the legacy market-type-less file is skipped). A dataset with no known downloader (derived dominance / SSR / liquidations) gets `downloader_factory=None` → **view-only**: displayed + freshness reported, but `update_tracker` raises `ValueError` (server → HTTP 400). When a new downloader/path convention is added, add a discovery provider in the same change.
-- **Charts Split by Role:** Price/time-series panes use `lightweight-charts` (financial-native candlesticks + synced volume pane); indicators with value-zone shading (and future gauges / diverging bars) use `ECharts` (`visualMap`/`markArea`). The React layer picks the renderer from `TrackerSpec.chart_lib` — don't hard-code a library per panel. Lightweight-charts requires strictly-ascending unique times; dedupe by business-day (last wins) before `setData` so an intraday "now" point (e.g. CoinGecko) doesn't collide with that day's bar.
-- **Local-Only FastAPI:** `chainwind serve` binds to `127.0.0.1` and opens the local browser. Never bind to `0.0.0.0` or expose the server publicly — the future PyWebView / Tauri upgrade path assumes single-machine operation. The React SPA lives in `chainwind/frontend/` (matching navigaitor + the CI `verify-frontend` detection) and builds to `chainwind/frontend/dist`, which the server mounts at `/`; the `[http]` extra (`fastapi` + `uvicorn`) gates the server so a data-only install stays web-stack-free.
-- **Inactive Submodule:** Chainwind is registered with `active = false` in `.gitmodules` so work-workstation checkouts skip it. Don't flip this in `.gitmodules`; activate locally with `git config --local submodule.chainwind.active true`.
-- **Per-Coin Freshness UX:** The coin tab MUST report per-dataset freshness with one-click "Download missing" affordances. Background fetches MUST go through traidwind's downloader interface so loggair lineage is preserved.
+CLI: `list-coins`, `list-trackers`, `catalog`, `freshness`, `update`, `serve`. The per-coin tab
+and the portfolio tab are not built (`TASKS.md`). Solana MVRV is unsupported (below).
+
+## Rules
+
+- Extend traidwind, never duplicate it. Today chainwind reuses traidwind's downloaders and
+  `traidwind.paths`. A backtest panel must reuse `FreqtradeAdapter`, the config translator and
+  the indicator/overlay registry.
+- The crypto-website and on-chain sources are `DownloadCoinGeckoMarketCap`,
+  `DownloadDeFiLlamaStablecoins`, `DownloadFarsideETFFlows`, `DownloadFearGreed`,
+  `DownloadMVRVZScore` and `DownloadCoinMetricsMVRV`. CCXT exchange data and non-crypto macro
+  (FRED, yfinance) stay in traidwind.
+- MVRV is two downloaders, split by coverage:
+  - `DownloadMVRVZScore` is Bitcoin-only and writes `[mvrv_zscore]`.
+  - `DownloadCoinMetricsMVRV` is multi-asset, derives the Z-Score locally and writes
+    `[mvrv, mvrv_zscore]`. An unsupported or gated asset (Solana) logs `[unsupported]`, writes
+    nothing and never raises.
+    (`tests/test_download_coinmetrics_mvrv.py::TestDownloadCoinMetricsMVRV::test_unsupported_asset_logs_warning`)
+  - The two Z-Scores are not scale-comparable. Chart the ratio of a CoinMetrics series and attach
+    no `zones` unless they are calibrated per asset (the `eth_mvrv` tracker does this).
+- Metadata lives in the registries, never inline in UI, CLI or API code. New coins extend
+  `BUILTIN_COINS`, new trackers extend `BUILTIN_TRACKERS`, and the UI reads `list_trackers()` /
+  `get_tracker()`. (`tests/test_coins.py`, `tests/test_trackers.py`)
+  - A tracker's `downloader_factory` is the single source of its update path:
+    `chainwind update` builds it and sets `skip_if_fresh=False` under `--force`.
+    (`tests/test_update.py::test_update_tracker_force_disables_skip`)
+  - `category`, `chart_lib` and `chart_type` stay closed `Literal`s
+    (`tests/test_trackers.py::test_chart_fields_are_closed_values`).
+- The catalog is disk truth: `trackers.catalog()` is `discovery.discover_trackers()` merged with
+  the curated `BUILTIN_TRACKERS`, matched by `zarr_path`. A curated tracker not yet on disk
+  still lists, as missing.
+  - Discovery's path-to-id conventions stay the exact inverse of the writers
+    (`traidwind.paths._zarr_path`): disk `BTC_USDT:USDT` is CCXT `BTC/USDT:USDT`. Only `spot/`
+    and `futures/` are walked. (`tests/test_discovery.py`)
+  - A dataset with no downloader is view-only: `update_tracker` raises `ValueError` and the
+    server answers HTTP 400. (`tests/test_server.py::test_update_view_only_returns_400`)
+  - A new downloader or path convention gets a discovery provider in the same change.
+- The renderer comes from `TrackerSpec.chart_lib`: `lightweight-charts` for prices, ECharts for
+  zoned indicators. Never hard-code a library per panel. Before `setData`, dedupe times by
+  business day, last wins, because `lightweight-charts` needs strictly ascending unique times
+  (`frontend/src/components/PriceChart.tsx`). *(unpinned)*
+- `chainwind serve` binds `127.0.0.1` only. Never `0.0.0.0`, never public.
+  (`tests/test_server.py::test_serve_invokes_uvicorn`)
+  - The SPA source is `frontend/` and builds to `frontend/dist`, which the server mounts at `/`.
+  - `fastapi` and `uvicorn` stay behind the `[http]` extra, so a data-only install has no web
+    stack.
+- The coin tab (not built) reports per-dataset freshness with a one-click "Download missing".
+  Background fetches go through the downloaders, so loggair lineage is kept.
+- chainwind is `active = false` in the root `.gitmodules`. Leave that line alone and activate
+  locally with `git config --local submodule.chainwind.active true`.
